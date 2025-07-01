@@ -1,0 +1,12 @@
+[submodule "swap-router-v1/lib/forge-std"]
+	path = swap-router-v1/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "swap-router-v1/lib/v3-core"]
+	path = swap-router-v1/lib/v3-core
+	url = https://github.com/uniswap/v3-core
+[submodule "swap-router-v1/lib/openzeppelin-contracts"]
+	path = swap-router-v1/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "swap-router-v1/lib/v4-core"]
+	path = swap-router-v1/lib/v4-core
+	url = https://github.com/uniswap/v4-core

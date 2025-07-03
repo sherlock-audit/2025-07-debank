@@ -6,6 +6,69 @@
 
 # Q&A
 
+### Q: On what chains are the smart contracts going to be deployed?
+Ethereum, Optimism, Arbitrum, Fantom, Cronos, Polygon, BNB Smart Chain, Base, zkSync Era, Linea, Avalanche, Scroll, Blast, Mantle, Sonic, Berachain, Hyperliquid L1 
+
+___
+
+### Q: If you are integrating tokens, are you allowing only whitelisted tokens to work with the codebase or any complying with the standard? Are they assumed to have certain properties, e.g. be non-reentrant? Are there any types of [weird tokens](https://github.com/d-xo/weird-erc20) you want to integrate?
+Consider a token to be valid if it has over 500,000 USDC in liquidity on any one of the following DEXs: Uniswap V2–V4, Balancer V1–V2, Curve V1–V2, Maker PSM, Velodrome, Algebra, 1inch V6, Matcha V2, Paraswap V6, KyberSwap, or Magpie V3.
+___
+
+### Q: Are there any limitations on values set by admins (or other roles) in the codebase, including restrictions on array lengths?
+The admin is considered trusted, but we want to make sure that, if the admin account/key were ever compromised, any resulting damage to the protocol would remain within controllable limits. The severity of issues related to admins losing accounts/private keys will be Medium because it's an extensive limitation.
+___
+
+### Q: Are there any limitations on values set by admins (or other roles) in protocols you integrate with, including restrictions on array lengths?
+No
+___
+
+### Q: Is the codebase expected to comply with any specific EIPs?
+ERC20
+___
+
+### Q: Are there any off-chain mechanisms involved in the protocol (e.g., keeper bots, arbitrage bots, etc.)? We assume these mechanisms will not misbehave, delay, or go offline unless otherwise specified.
+We handle route finding off‑chain and perform settlement on‑chain; this part is considered trusted.
+___
+
+### Q: What properties/invariants do you want to hold even if breaking them has a low/unknown impact?
+no
+___
+
+### Q: Please discuss any design choices you made.
+1. Admin Pause Mechanism(Dexswap/Router):
+ *    - Any admin can pause the contract independently
+ *    - When one admin pauses, they can unpause later
+ *    - If two or more admins pause, the contract cannot be unpaused
+2.  Potential protocol fee revenue loss(Dexswap/Router):
+-    We do not treat these two points as vulnerabilities. Allowing the caller to set feeRate (up to maxFeeRate) and choose any feeReceiver is an intentional part of the design: the protocol is meant to be used through our trusted front-end, which always supplies safe values. If someone bypasses the front-end and crafts their own calldata, that lies outside the guarantees we provide.
+___
+
+### Q: Please provide links to previous audits (if any) and all the known issues or acceptable risks.
+1.Missing check on the fromToken parameter
+In the Executor contracts, before performing an external token swap operation, the forceApprove function will be called first to authorize the external router contract for the tokens. However, before this, it does not check whether the incoming fromToken parameter is ETH. If fromToken is ETH, directly calling the forceApprove function for authorization will result in an error and a revert, preventing the token swap from proceeding normally.
+Answer: The ETH swaps is in WethExecutor.sol
+2. The feeRate parameter in the swap function can be set arbitrarily. As long as it is smaller than the maximum value(maxFeeRate), it will be accepted. This enables users to always set the fee as low as possible (even zero), thus significantly reducing the fee income of the protocol.
+Answer: the protocol is meant to be used through our trusted front-end, which always supplies safe values. If someone bypasses the front-end and crafts their own calldata to contracts, that lies outside the guarantees we provide.
+
+3. In the Router contract, Each time the swap function is called for a token transaction, a portion of the handling fee is collected and given to the feeReceiver address. Normally, this address should be that of the protocol's official side. However, in the swap function, there is no check on the feeReceiver address, and it can be arbitrarily input from the outside. This means that users can input their own addresses to steal the handling fee income that should belong to the protocol.
+Answer: the protocol is meant to be used through our trusted front-end, which always supplies safe values. If someone bypasses the front-end and crafts their own calldata to contracts, that lies outside the guarantees we provide.
+
+4. In the Admin contract, there are three administrators who can call the pause and unpause functions. Each time an administrator calls the pause function, the pauseCount is incremented. However, in the unpause function, the check can only pass and the function can only be called when the pauseCount is less than 2. This means that if two administrators call the pause function simultaneously(either without prior communication with each other or in case of permission theft), the unpause function can never be called to lift the contract's paused state, and the contract will be permanently paused and unusable.
+
+___
+
+### Q: Please list any relevant protocol resources.
+https://github.com/DeBankDeFi/swap-router-v1/blob/master/DEXSWAPREADME.md
+https://github.com/DeBankDeFi/swap-router-v1/blob/master/ROUTERREADME.md
+
+
+___
+
+### Q: Additional audit information.
+Contains two parts
+1. https://github.com/DeBankDeFi/swap-router-v1/blob/master/src/aggregatorRouter/DexSwap.sol, this is dexSwap, similar to metamask swap, after constructing calldata off-chain, make any call to any aggregator to complete the swap transaction, each aggregator is in https://github.com/DeBankDeFi/swap-router-v1/tree/master/src/aggregatorRouter/adapter, readme: https://github.com/DeBankDeFi/swap-router-v1/blob/master/DEXSWAPREADME.md
+2. This is our self-developed aggregator router (https://github.com/DeBankDeFi/swap-router-v1/blob/master/src/router/Router.sol ), which will be connected as the adapter of dexSwap later, involving executor and corresponding pool adapter, readme: https://github.com/DeBankDeFi/swap-router-v1/blob/master/ROUTERREADME.md
 
 
 # Audit scope

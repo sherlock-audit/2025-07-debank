@@ -47,14 +47,16 @@ ___
 ### Q: Please provide links to previous audits (if any) and all the known issues or acceptable risks.
 1.Missing check on the fromToken parameter
 In the Executor contracts, before performing an external token swap operation, the forceApprove function will be called first to authorize the external router contract for the tokens. However, before this, it does not check whether the incoming fromToken parameter is ETH. If fromToken is ETH, directly calling the forceApprove function for authorization will result in an error and a revert, preventing the token swap from proceeding normally.
-Answer: The ETH swaps is in WethExecutor.sol
+Answer: We acknowledge this, but ETH swaps are handled in WethExecutor.sol.
+
 2. The feeRate parameter in the swap function can be set arbitrarily. As long as it is smaller than the maximum value(maxFeeRate), it will be accepted. This enables users to always set the fee as low as possible (even zero), thus significantly reducing the fee income of the protocol.
-Answer: the protocol is meant to be used through our trusted front-end, which always supplies safe values. If someone bypasses the front-end and crafts their own calldata to contracts, that lies outside the guarantees we provide.
+Answer: We acknowledge this, but we do not consider it a valid issue.
 
 3. In the Router contract, Each time the swap function is called for a token transaction, a portion of the handling fee is collected and given to the feeReceiver address. Normally, this address should be that of the protocol's official side. However, in the swap function, there is no check on the feeReceiver address, and it can be arbitrarily input from the outside. This means that users can input their own addresses to steal the handling fee income that should belong to the protocol.
-Answer: the protocol is meant to be used through our trusted front-end, which always supplies safe values. If someone bypasses the front-end and crafts their own calldata to contracts, that lies outside the guarantees we provide.
+Answer: We acknowledge this.
 
 4. In the Admin contract, there are three administrators who can call the pause and unpause functions. Each time an administrator calls the pause function, the pauseCount is incremented. However, in the unpause function, the check can only pass and the function can only be called when the pauseCount is less than 2. This means that if two administrators call the pause function simultaneously(either without prior communication with each other or in case of permission theft), the unpause function can never be called to lift the contract's paused state, and the contract will be permanently paused and unusable.
+Answer: We acknowledge this.
 
 ___
 

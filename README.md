@@ -12,7 +12,7 @@ Ethereum, Optimism, Arbitrum, Fantom, Cronos, Polygon, BNB Smart Chain, Base, zk
 ___
 
 ### Q: If you are integrating tokens, are you allowing only whitelisted tokens to work with the codebase or any complying with the standard? Are they assumed to have certain properties, e.g. be non-reentrant? Are there any types of [weird tokens](https://github.com/d-xo/weird-erc20) you want to integrate?
-Consider a token to be valid if it has over 500,000 USDC in liquidity on any one of the following DEXs: Uniswap V2–V4, Balancer V1–V2, Curve V1–V2, Maker PSM, Velodrome, Algebra, 1inch V6, Matcha V2, Paraswap V6, KyberSwap, or Magpie V3.
+Consider a token to be valid if it has over 500,000 USDC in liquidity on any one of the following DEXs: Uniswap V2–V4, Balancer V1–V2, Curve V1–V2, Maker PSM, Velodrome, Algebra, 1inch V6, Matcha V2, Paraswap V6, KyberSwap, or Magpie V3. Including any weird token if they qualify for the liquidity requirement.
 ___
 
 ### Q: Are there any limitations on values set by admins (or other roles) in the codebase, including restrictions on array lengths?

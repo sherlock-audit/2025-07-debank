@@ -16,7 +16,8 @@ Consider a token to be valid if it has over 500,000 USDC in liquidity on any one
 ___
 
 ### Q: Are there any limitations on values set by admins (or other roles) in the codebase, including restrictions on array lengths?
-The admin is considered trusted, but we want to make sure that, if the admin account/key were ever compromised, any resulting damage to the protocol would remain within controllable limits. If the malicious actor can steal users' hanging approvals (e.g. a user approved the in-scope code to spend type(uint256).max tokens, and the malicious actor can steal them after getting the admin's key/account), then it's considered a valid issue with Medium impact. Any other damage that the malicious actor can inflict on the protocol is considered acceptable.
+The admin is considered trusted, but we want to make sure that, if the admin account/key were ever compromised, any resulting damage to the protocol would remain within controllable limits. If the malicious actor can steal users' hanging approvals (e.g. a user approved the in-scope code to spend type(uint256).max tokens, and the malicious actor can steal them after getting the admin's key/account), then it's considered a valid issue with Medium impact. Any other damage that the malicious actor can inflict on the protocol with compromised admin keys/accounts is considered acceptable.
+
 ___
 
 ### Q: Are there any limitations on values set by admins (or other roles) in protocols you integrate with, including restrictions on array lengths?
